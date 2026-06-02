@@ -6,7 +6,6 @@ use App\Helpers\UploadHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -52,10 +51,11 @@ class ProductController extends Controller
 
         $image = null;
 
-        // UPLOAD IMAGE
         if ($request->hasFile('image')) {
-            $image = $request->file('image')
-                ->store('products', 'public');
+            $file = $request->file('image');
+            $path = 'products';
+            $fileName = UploadHelper::uploadFile($file, $path);
+            $image = $path . '/' . $fileName;
         }
 
         // CREATE PRODUCT
@@ -127,27 +127,16 @@ class ProductController extends Controller
 
         // UPDATE IMAGE
         if ($request->hasFile('image')) {
-
             // DELETE OLD IMAGE
             if ($product->image) {
-                Storage::disk('public')
-                    ->delete($product->image);
+                UploadHelper::deleteFile($product->image);
             }
 
             // STORE NEW IMAGE
-            $image = $request->file('image')
-                ->store('products', 'public');
-        }
-
-        if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $path = 'uploads/images';
-            if ($product->image) {
-                $filePath = $product->image;
-                UploadHelper::deleteFile($filePath);
-            }
+            $path = 'products';
             $fileName = UploadHelper::uploadFile($file, $path);
-            $request->image = $path . '/' . $fileName;
+            $image = $path . '/' . $fileName;
         }
 
         // UPDATE PRODUCT
@@ -166,7 +155,7 @@ class ProductController extends Controller
 
             'price' => $request->price,
 
-            'image' => $request->image ? $fileName : $product->image,
+            'image' => $image,
 
             'status' => $request->status,
         ]);
@@ -184,13 +173,10 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // DELETE IMAGE
         if ($product->image) {
-            Storage::disk('public')
-                ->delete($product->image);
+            UploadHelper::deleteFile($product->image);
         }
 
-        // DELETE PRODUCT
         $product->delete();
 
         return response()->json([
