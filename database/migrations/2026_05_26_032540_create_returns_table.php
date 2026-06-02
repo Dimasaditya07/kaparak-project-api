@@ -13,6 +13,29 @@ return new class extends Migration
     {
         Schema::create('returns', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('reservation_id')
+                ->constrained('reservations')
+                ->onDelete('cascade');
+
+            $table->timestamp('returned_at')
+                ->nullable();
+
+            $table->decimal('late_fee', 12, 2)
+                ->default(0);
+
+            $table->decimal('damage_fee', 12, 2)
+                ->default(0);
+
+            $table->text('note')
+                ->nullable();
+
+            $table->enum('status', [
+                'pending',
+                'returned',
+                'damaged'
+            ])->default('pending');
+
             $table->timestamps();
         });
     }

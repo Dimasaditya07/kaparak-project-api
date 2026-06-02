@@ -11,36 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('returns', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
 
-            // RELATION
             $table->foreignId('reservation_id')
                 ->constrained('reservations')
                 ->onDelete('cascade');
 
-            // RETURN INFO
-            $table->timestamp('returned_at')
-                ->nullable();
+            $table->string('payment_method');
+            $table->decimal('amount', 12, 2);
+            $table->string('proof')->nullable();
 
-            // DENDA TELAT
-            $table->decimal('late_fee', 12, 2)
-                ->default(0);
-
-            // DENDA KERUSAKAN
-            $table->decimal('damage_fee', 12, 2)
-                ->default(0);
-
-            // CATATAN ADMIN
-            $table->text('note')
-                ->nullable();
-
-            // pending | returned | damaged
             $table->enum('status', [
                 'pending',
-                'returned',
-                'damaged'
+                'verified',
+                'rejected'
             ])->default('pending');
+
+            $table->timestamp('paid_at')->nullable();
 
             $table->timestamps();
         });
@@ -51,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('returns');
+        Schema::dropIfExists('payments');
     }
 };
