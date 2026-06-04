@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payment;
+use App\Helpers\UploadHelper;
 
 class PaymentController extends Controller
 {
@@ -29,8 +30,10 @@ class PaymentController extends Controller
         $proof = null;
 
         if ($request->hasFile('proof')) {
-            $proof = $request->file('proof')
-                ->store('payments', 'public');
+            $file = $request->file('proof');
+            $path = 'payments';
+            $fileName = UploadHelper::uploadFile($file, $path);
+            $proof = $path . '/' . $fileName;
         }
 
         $payment = Payment::create([
