@@ -12,9 +12,10 @@ class ReservationController extends Controller
 {
     public function index()
     {
-        $reservations = Reservation::with(
+        $reservations = Reservation::with([
+            'user',
             'reservationItems.product'
-        )->latest()->get();
+        ])->latest()->get();
 
         return response()->json([
             'data' => $reservations
@@ -42,8 +43,8 @@ class ReservationController extends Controller
             'total' => $total,
             'pickup_date' => $cart->cartItems->first()->start_date,
             'return_date' => $cart->cartItems->first()->end_date,
-            'status' => 'pending',
-            'payment_status' => 'pending'
+            'status' => 'unpaid',
+            'payment_status' => 'unpaid',
         ]);
 
         foreach ($cart->cartItems as $item) {

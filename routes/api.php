@@ -12,7 +12,10 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReturnController;
+use App\Http\Controllers\Api\CheckoutController;
+use App\Http\Controllers\Api\MidtransCallbackController;
 
+Route::post('/callback', [MidtransCallbackController::class, 'handle']);
 
 // AUTH
 Route::post('/login', [
@@ -36,6 +39,7 @@ Route::apiResource(
     'categories',
     CategoryController::class
 );
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -87,6 +91,8 @@ Route::middleware('auth:sanctum')->group(function () {
         'returns',
         ReturnController::class
     );
+
+    Route::post('/checkout', [CheckoutController::class, 'checkout']);
 });
 
 

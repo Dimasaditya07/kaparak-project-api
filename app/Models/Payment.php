@@ -11,6 +11,9 @@ class Payment extends Model
 
     protected $fillable = [
         'reservation_id',
+        'order_id',
+        'snap_token',
+        'transaction_id',
         'payment_method',
         'amount',
         'proof',
