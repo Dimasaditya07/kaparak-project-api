@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReturnController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\MidtransCallbackController;
+use App\Http\Controllers\Api\PackageController;
 
 Route::post('/callback', [MidtransCallbackController::class, 'handle']);
 
@@ -39,6 +40,8 @@ Route::apiResource(
     'categories',
     CategoryController::class
 );
+
+Route::apiResource('packages', PackageController::class);
 
 
 
@@ -93,6 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
     Route::post('/checkout', [CheckoutController::class, 'checkout']);
+    Route::get('/checkout/summary', [CheckoutController::class, 'summary']);
 });
 
 
